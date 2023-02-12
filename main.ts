@@ -13,7 +13,8 @@ const proxy = (name: string) => fetch(`https://raw.githubusercontent.com/ziv/ldr
     .then(text => new Response(text, {headers}));
 
 function handler(req: Request) {
-    const name = (new URL(req.url).pathname).substring(1);
+    const parts = (new URL(req.url).pathname).split('/');
+    const name = parts[parts.length - 1];
     const path = DB[name];
     return path ? proxy(path) : notFound();
 }
