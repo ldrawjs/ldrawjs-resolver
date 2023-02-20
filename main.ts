@@ -1,5 +1,5 @@
 import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
-import { collect, parse } from "npm:@ldrawjs/core@1.1.2";
+import { collect, parse } from "https://deno.land/x/ldrawjs@v1.1.5/mod.ts";
 import resolver from "./resolver.ts";
 
 const headers = {
@@ -11,7 +11,7 @@ const headers = {
 
 async function build(req: Request) {
   const data = await (new Response(req.body)).json();
-  const map = await collect(parse(data.ldr), resolver);
+  const map = await collect(parse(data.ldr), resolver as any);
   const output = JSON.stringify([...map.entries()]);
   return new Response(output, { headers });
 }

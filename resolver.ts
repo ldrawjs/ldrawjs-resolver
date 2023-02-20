@@ -1,7 +1,7 @@
 import { has, read, write } from "./cache.ts";
 import MAP from "./ldr-map.ts";
 
-const URL = "https://raw.githubusercontent.com/ziv/ldr-db/main/l/";
+const URL = "https://raw.githubusercontent.com/ldrawjs/ldrawjs-db/main/l/";
 
 export default async function resolver(key: string) {
   const name = key.toLowerCase();

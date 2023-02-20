@@ -1,4 +1,4 @@
-const MAP = {
+const MAP: Record<string, string> = {
   "clh3.dat": "p/clh3.json",
   "3-8edge.dat": "p/3-8edge.json",
   "axl5end.dat": "p/axl5end.json",
