@@ -3,7 +3,7 @@ import { collect, parse } from "npm:@ldrawjs/core@1.1.2";
 import resolver from "./resolver.ts";
 
 const headers = {
-  "content-type": "text/plain",
+  "content-type": "application/json",
   "access-control-allow-origin": "*",
 };
 
@@ -19,7 +19,7 @@ async function build(req: Request) {
 async function resolve(req: Request) {
   const parts = (new URL(req.url).pathname).split("/");
   const name = parts[parts.length - 1];
-  const output = await resolver(name);
+  const output = JSON.stringify(await resolver(name));
   return new Response(output, { headers });
 }
 
