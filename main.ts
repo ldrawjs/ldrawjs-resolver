@@ -1,22 +1,37 @@
-import { serve } from "https://deno.land/std@0.173.0/http/server.ts";
-import DB from "./db.ts";
+import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
+import { collect, parse } from "npm:@ldrawjs/core@1.1.2";
+import resolver from "./resolver.ts";
 
 const headers = {
-    "content-type": "text/plain",
-    "access-control-allow-origin": "*",
+  "content-type": "text/plain",
+  "access-control-allow-origin": "*",
 };
 
-const notFound = () => new Response("not found", {status: 404, headers});
+// todo error handlers
 
-const proxy = (name: string) => fetch(`https://raw.githubusercontent.com/ziv/ldr-db/main/${name}`)
-    .then(res => res.text())
-    .then(text => new Response(text, {headers}));
+async function build(req: Request) {
+  const data = await (new Response(req.body)).json();
+  const map = await collect(parse(data.ldr), resolver);
+  const output = JSON.stringify([...map.entries()]);
+  return new Response(output, { headers });
+}
 
-function handler(req: Request) {
-    const parts = (new URL(req.url).pathname).split('/');
-    const name = parts[parts.length - 1];
-    const path = DB[name];
-    return path ? proxy(path) : notFound();
+async function resolve(req: Request) {
+  const parts = (new URL(req.url).pathname).split("/");
+  const name = parts[parts.length - 1];
+  const output = await resolver(name);
+  return new Response(output, { headers });
+}
+
+async function handler(req: Request) {
+  return "POST" === req.method ? build(req) : resolve(req);
 }
 
 await serve(handler);
+
+//
+// const notFound = () => new Response("not found", {status: 404, headers});
+//
+// const proxy = (name: string) => fetch(`https://raw.githubusercontent.com/ziv/ldr-db/main/${name}`)
+//     .then(res => res.text())
+//     .then(text => new Response(text, {headers}));
